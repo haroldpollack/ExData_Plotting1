@@ -1,0 +1,54 @@
+---
+title: "Plot1 for EDA PS 1"
+author: "Harold Pollack"
+date: "9/14/2018"
+html_document: default
+word_document: default
+keep_md: true
+
+---
+
+```{r setup, include=FALSE}
+library("dplyr")
+library("knitr")
+library("ggplot2")
+library("lattice")
+library("gridExtra")
+library("ggpubr")
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Read the UCI data. Then save the dates 2/1/2007 and 2/2/2007. Note that the date variable is dd/mm/y. So some care must be taken. ALso cache=True given size of the dataset.
+
+```{r read data, cache=TRUE}
+mydata <- read.csv("/Users/haroldpollack/Documents/coursera_EDA/pS1/household_power_consumption.txt",header=TRUE,sep=";")
+mydata$date_formatted <-as.Date(mydata$Date,format="%d/%m/%Y")
+str(mydata)
+summary(mydata)
+# table(mydata$Date)
+#
+#   now extract the two dates called for in the assignment
+#
+data_for_graphing <-subset(mydata,(Date== "1/2/2007" | Date == "2/2/2007"))
+str(data_for_graphing)
+summary(data_for_graphing)
+# table(data_for_graphing$Date)
+table(data_for_graphing$date_formatted)
+```
+
+make the initial histogram and save as plot1.png
+
+```{R plots, cache=TRUE}
+#
+# note that data_for_graphing$Global_active_power is a factor. It has to be changed to numeric for graphing
+#
+# Global_active_power is a factor. So one must be careful converting it to numeric
+#
+Global_active_power_numeric <- as.numeric(as.character(data_for_graphing$Global_active_power)) 
+hist(Global_active_power_numeric,col="red",xlab="Global Active Power (kilowatts)",main="Global Active Power",ylab="Frequency")
+#
+#   now save the png file
+#
+dev.copy(png,'/Users/haroldpollack/Documents/coursera_datascience3/Plot1/plot1.png')
+dev.off()
