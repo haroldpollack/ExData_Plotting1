@@ -3,8 +3,8 @@ title: "Plot4"
 author: "Harold Pollack"
 date: "9/15/2018"
 output:
-  word_document: default
   html_document: default
+  word_document: default
 ---
 
 This is the markdown file that creates plot4. I didn't print out all the intermediate products that are the same as those for plot one.
@@ -91,7 +91,7 @@ with (data_for_graphing, {
   plot(dts2,Sub_metering_1_numeric,type="l", xlab=" ", ylab = "Energy sub metering", col="blue")
 points(dts2,Sub_metering_2_numeric, type='l',col="red")
 points(dts2,Sub_metering_3, type='l',col="green")
-legend ("topright",lty=1, col=c("blue","red","green"),legend = c("Sub_metering_1","Sub_metering_2","Sub_metering_3"),cex=0.5)
+legend ("topright",lty=1, col=c("blue","red","green"),legend = c("Sub_metering_1","Sub_metering_2","Sub_metering_3"),cex=0.5, bty="n")
  
   plot(dts2,as.numeric(as.character(Global_reactive_power)),type="l", xlab=" ", ylab = "Energy sub metering")
        })
