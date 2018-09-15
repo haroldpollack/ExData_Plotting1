@@ -1,0 +1,77 @@
+---
+title: "plot2"
+author: "Harold Pollack"
+date: "9/15/2018"
+output: html_document
+---
+This is the markdown file that creates plot2. I didn't print out all the intermediate products that are the same as those for plot one.
+
+```{r setup, include=FALSE}
+library("dplyr")
+library("knitr")
+library("ggplot2")
+library("lattice")
+library("gridExtra")
+library("ggpubr")
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+I first read the UCI data. Then save the dates 2/1/2007 and 2/2/2007. Note that the date variable is dd/mm/y. So some care must be taken. ALso cache=True given size of the dataset.
+
+```{r read data, cache=TRUE}
+mydata <- read.csv("/Users/haroldpollack/Documents/coursera_EDA/pS1/household_power_consumption.txt",header=TRUE,sep=";")
+mydata$date_formatted <-as.Date(mydata$Date,format="%d/%m/%Y")
+# str(mydata)
+# summary(mydata)
+# table(mydata$Date)
+#
+#   now extract the two dates called for in the assignment
+#
+data_for_graphing <-subset(mydata,(Date== "1/2/2007" | Date == "2/2/2007"))
+# str(data_for_graphing)
+# summary(data_for_graphing)
+# table(data_for_graphing$Date)
+table(data_for_graphing$date_formatted)
+#
+# now figure out weekday
+#
+data_for_graphing$weekday <- weekdays(data_for_graphing$date_formatted)
+table(data_for_graphing$weekday)
+```
+
+Now manipulate date/time. I used code found here http://biostat.mc.vanderbilt.edu/wiki/pub/Main/ColeBeck/datestimes.pdf 
+
+```{R date-time manipulation, cache=TRUE}
+data_for_graphing$dts1 <- paste(data_for_graphing$date_formatted, data_for_graphing$Time)
+time_scr <-strptime(data_for_graphing$dts1,format = "%Y-%m-%d %H:%M:%S")
+#
+# time_scr uses strptime. I just included this to learn.
+#
+str(time_scr)
+data_for_graphing$dts2 <- as.POSIXct(data_for_graphing$dts1, format = "%Y-%m-%d %H:%M:%S")
+str(data_for_graphing$dts1)
+str(data_for_graphing$dts2)
+```
+
+make the graph and save as plot2.png
+
+```{R plots, cache=TRUE}
+#
+# note that data_for_graphing$Global_active_power is a factor. It has to be changed to numeric for graphing
+#
+# Global_active_power is a factor. So one must be careful converting it to numeric
+#
+data_for_graphing$Global_active_power_numeric <- as.numeric(as.character(data_for_graphing$Global_active_power)) 
+# hist(Global_active_power_numeric,col="red",xlab="Global Active  Power (kilowatts)",main="Global Active Power",ylab="Frequency")
+
+#
+# time series by day
+#
+plot(data_for_graphing$dts2,data_for_graphing$Global_active_power_numeric,type="l", xlab=" ", ylab = "Global Active Power (kilowatts)")
+
+#
+#   now save the png file
+#
+dev.copy(png,'/Users/haroldpollack/Documents/coursera_datascience3/Plot2/plot2.png')
+dev.off()
